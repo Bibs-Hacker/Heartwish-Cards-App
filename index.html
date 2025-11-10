@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HeartWish Certify</title>
+
+  <!-- PWA Meta -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#ff6f9c">
+  <link rel="icon" href="https://files.catbox.moe/vjjtdz.jpg" sizes="192x192">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+  <style>
+    :root {
+      --pink: #ff6f9c;
+      --purple: #9b59b6;
+      --neon-pink: #ff2e96;
+      --neon-purple: #8e44ad;
+      --light-bg: #fdf2f8;
+      --dark-bg: #1a0033;
+      --glow: 0 0 15px rgba(255, 45, 150, 0.7);
+      --glow-purple: 0 0 15px rgba(142, 68, 173, 0.7);
+      --text-light: #fff;
+      --text-dark: #ddd;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      overflow-y: auto;
+      color: var(--text-light);
+      transition: background 0.5s ease, color 0.5s ease;
+      min-height: 100vh;
+    }
+
+    .light-mode { background: linear-gradient(135deg, #ffeef8, #f8e8ff); }
+    .dark-mode { background: linear-gradient(135deg, #1a0033, #2c0b4e); color: var(--text-dark); }
+
+    .bg-animation {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -2;
+      background: radial-gradient(circle at 20% 80%, var(--neon-pink), transparent 50%),
+                  radial-gradient(circle at 80% 20%, var(--neon-purple), transparent 50%),
+                  radial-gradient(circle at 50% 50%, rgba(255, 45, 150, 0.1), transparent);
+      animation: pulse 8s infinite alternate;
+      opacity: 0.6;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    #particles-js {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+    }
+
+    /* Splash Screen */
+    .splash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 9999;
+      animation: fadeIn 1s ease-in;
+    }
+
+    .splash.hidden { display: none; }
+
+    .gift-box {
+      width: 120px; height: 120px;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: float 3s infinite ease-in-out;
+    }
+
+    .gift-box::before, .gift-box::after {
+      content: '';
+      position: absolute;
+      background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple));
+      border-radius: 15px;
+      box-shadow: var(--glow);
+    }
+
+    .gift-box::before {
+      width: 100%; height: 80px; bottom: 0;
+      transform: rotateX(90deg) translateZ(20px);
+    }
+
+    .gift-box::after {
+      width: 80px; height: 100%; left: 20px;
+      transform: rotateY(90deg) translateZ(20px);
+    }
+
+    .ribbon-h, .ribbon-v {
+      position: absolute;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(255,255,255,0.8);
+    }
+
+    .ribbon-h { width: 140px; height: 25px; top: 38px; left: -10px; transform: translateZ(40px); }
+    .ribbon-v { width: 25px; height: 120px; left: 48px; top: -10px; transform: translateZ(40px); }
+
+    .logo-text {
+      font-family: 'Dancing Script', cursive;
+      font-size: 3rem;
+      margin-top: 20px;
+      background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: var(--glow);
+      animation: glowText 2s infinite alternate;
+    }
+
+    @keyframes glowText {
+      from { text-shadow: var(--glow); }
+      to { text-shadow: 0 0 25px rgba(255, 45, 150, 0.9); }
+    }
+
+    .get-started-btn {
+      margin-top: 30px;
+      padding: 14px 40px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple));
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: var(--glow);
+      transition: all 0.3s ease;
+      animation: bounce 2s infinite;
+    }
+
+    .get-started-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 30px rgba(255, 45, 150, 0.9);
+    }
+
+    /* Main Interface */
+    .main-container {
+      display: none;
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 20px;
+      opacity: 0;
+      animation: fadeInUp 1s forwards 0.5s;
+    }
+
+    .main-container.visible { display: block; }
+
+    .header { text-align: center; margin-bottom: 2rem; }
+    .header h1 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.8rem;
+      background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle { position: fixed; top: 20px; right: 20px; z-index: 100; }
+    .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc; transition: .4s; border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px;
+      background-color: white; transition: .4s; border-radius: 50%;
+    }
+    input:checked + .slider { background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple)); }
+    input:checked + .slider:before { transform: translateX(26px); }
+    .slider i { position: absolute; font-size: 16px; top: 50%; transform: translateY(-50%); color: #fff; }
+    .fa-sun { left: 8px; } .fa-moon { right: 8px; }
+
+    /* Content Grid */
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 992px) {
+      .content { grid-template-columns: 1fr; }
+      .preview-section { position: static; }
+    }
+
+    .form-section {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .form-group { margin-bottom: 1.5rem; }
+    label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-light); }
+    input, textarea, select {
+      width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 12px; background: rgba(255,255,255,0.1); color: var(--text-light);
+      font-size: 1rem; transition: all 0.3s;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none; border-color: var(--neon-pink); box-shadow: var(--glow);
+    }
+    textarea { resize: vertical; min-height: 100px; }
+
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .template-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .template-item {
+      height: 70px; border-radius: 12px; cursor: pointer; overflow: hidden;
+      border: 2px solid transparent; transition: all 0.3s; position: tplative;
+    }
+
+    .template-item img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .template-item.selected {
+      border-color: var(--neon-pink); box-shadow: var(--glow); transform: scale(1.05);
+    }
+
+    .template-item:hover { transform: scale(1.05); }
+
+    .upload-area {
+      border: 2px dashed rgba(255,255,255,0.4); border-radius: 12px; padding: 2rem;
+      text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 1rem;
+    }
+
+    .upload-area:hover { border-color: var(--neon-pink); background: rgba(255, 45, 150, 0.1); }
+    .upload-area.dragover { background: rgba(255, 45, 150, 0.2); border-color: var(--neon-pink); }
+
+    /* Preview */
+    .preview-section {
+      position: sticky;
+      top: 20px;
+      max-height: 90vh;
+      overflow: hidden;
+    }
+
+    .preview-card {
+      width: 100%; aspect-ratio: 3 / 4; background: white; border-radius: 20px;
+      overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.2); position: relative;
+      background-size: cover; background-position: center; color: #000; padding: 2rem;
+      display: flex; flex-direction: column; justify-content: space-between;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .preview-photo {
+      width: 120px; height: 120px; border-radius: 50%; object-fit: cover;
+      border: 5px solid white; box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      align-self: center; margin-top: 1rem;
+    }
+
+    .preview-name { font-size: 2.2rem; font-weight: 700; text-align: center; margin: 1rem 0; color: #333; }
+    .preview-age { font-size: 1.5rem; text-align: center; color: var(--neon-purple); font-weight: 600; }
+    .preview-message { font-size: 1.1rem; text-align: center; font-style: italic; margin: 1rem 0; color: #555; }
+    .preview-from { text-align: right; font-weight: 500; color: #777; }
+    .preview-date {
+      position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.8);
+      padding: 8px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 600;
+    }
+
+    .action-buttons {
+      display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;
+    }
+
+    .btn {
+      flex: 1; padding: 14px; border: none; border-radius: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.3s; display: flex; align-items: center;
+      justify-content: center; gap: 8px; min-width: 160px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple));
+      color: white; box-shadow: var(--glow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px); box-shadow: 0 0 25px rgba(255, 45, 150, 0.8);
+    }
+
+    .btn-whatsapp { background: #25D366; color: white; }
+    .btn-whatsapp:hover { background: #1DA851; }
+
+    .footer {
+      text-align: center; padding: 2rem; margin-top: 3rem; font-size: 0.9rem; color: rgba(255,255,255,0.7);
+    }
+
+    .social-links a {
+      color: var(--text-light); margin: 0 10px; font-size: 1.4rem; transition: all 0.3s;
+    }
+
+    .social-links a:hover { color: var(--neon-pink); transform: translateY(-3px); }
+
+    .support-btn {
+      background: transparent; border: 1px solid rgba(255,255,255,0.3); color: var(--text-light);
+      padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s;
+    }
+
+    .support-btn:hover { background: var(--neon-pink); border-color: var(--neon-pink); }
+
+    @keyframes float { 0%, 100% { transform: translateY(0) rotateY(0); } 50% { transform: translateY(-20px) rotateY(10deg); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+  </style>
+</head>
+<body class="dark-mode">
+
+  <div class="bg-animation"></div>
+  <div id="particles-js"></div>
+
+  <!-- Splash -->
+  <div class="splash" id="splash">
+    <div class="gift-box">
+      <div class="ribbon-h"></div>
+      <div class="ribbon-v"></div>
+    </div>
+    <h1 class="logo-text">HeartWish Certify</h1>
+    <button class="get-started-btn animate__animated animate__pulse animate__infinite" onclick="startApp()">
+      Get Started
+    </button>
+  </div>
+
+  <!-- Main App -->
+  <div class="main-container" id="mainApp">
+    <div class="theme-toggle">
+      <label class="switch">
+        <input type="checkbox" id="themeSwitch">
+        <span class="slider">
+          <i class="fas fa-sun"></i>
+          <i class="fas fa-moon"></i>
+        </span>
+      </label>
+    </div>
+
+    <div class="header">
+      <h1>Create Your Birthday Wish</h1>
+    </div>
+
+    <div class="content">
+      <!-- Form -->
+      <div class="form-section">
+        <div class="form-group">
+          <label>Upload Photo or Choose Template</label>
+          <div class="upload-area" id="uploadArea">
+            <p><i class="fas fa-cloud-upload-alt"></i> Drop image or click to upload</p>
+            <input type="file" id="photoInput" accept="image/*" hidden>
+          </div>
+
+          <div class="template-grid">
+            <!-- 10+ Unique Romantic Templates -->
+            <div class="template-item selected" data-bg="https://images.unsplash.com/photo-1516585427167-5e9e77b0b7e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"><img src="https://images.unsplash.com/photo-1516585427167-5e9e77b0b7e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Rose Garden"></div>
+            <div class="template-item" data-bg="https://images.unsplash.com/photo-1518621690314-2b6c7e0d45b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"><img src="https://images.unsplash.com/photo-1518621690314-2b6c7e0d45b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Sunset Love"></div>
+            <div class="template-item" data-bg="https://images.unsplash.com/photo-1506794778201-6e84d6e5b2d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"><img src="https://images.unsplash.com/photo-1506794778201-6e84d6e5b2d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Couple Silhouette"></div>
+            <div class="template-item" data-bg="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Heart Balloons"></div>
+            <div class="template-item" data-bg="https://images.unsplash.com/photo-1518562902578-086726d9e6f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"><img src="https://images.unsplash.com/photo-1518562902578-086726d9e6f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Pink Roses"></div>
+            <div class="template-item" data-bg="https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"><img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Candle Light"></div>
+            <div class="template-item" data-bg="https://images.unsplash.com/photo-1523438885200-67b13a9e1006?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"><img src="https://images.unsplash.com/photo-1523438885200-67b13a9e1006?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Love Letters"></div>
+            <div class="template-item" data-bg="https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Vintage Romance"></div>
+            <div class="template-item" data-bg="https://images.unsplash.com/photo-1505691723518-36a4ac3e8d5d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"><img src="https://images.unsplash.com/photo-1505691723518-36a4ac3e8d5d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Lavender Field"></div>
+            <div class="template-item" data-bg="https://images.unsplash.com/photo-1516585427167-5e9e77b0b7e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"><img src="https://images.unsplash.com/photo-1516585427167-5e9e77b0b7e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Neon Heart"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="inputName" placeholder="Enter name" value="Alex">
+        </div>
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" id="inputAge" placeholder="25" value="25">
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="inputDate">
+        </div>
+        <div class="form-group">
+          <label>From</label>
+          <input type="text" id="inputFrom" placeholder="Your name" value="Brian">
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea id="inputMessage">Wishing you a day filled with love, laughter, and endless joy! 🎉</textarea>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn btn-primary" onclick="downloadCard()">Download</button>
+          <button class="btn btn-whatsapp" onclick="sendViaWhatsApp()">Send via WhatsApp</button>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="preview-section">
+        <div class="preview-card" id="previewCard" style="background-image: url('https://images.unsplash.com/photo-1516585427167-5e9e77b0b7e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+          <div class="preview-date" id="previewDate">Nov 10, 2025</div>
+          <img src="" alt="" class="preview-photo" id="previewPhoto" style="display:none;">
+          <div class="preview-name" id="previewName">Alex</div>
+          <div class="preview-age" id="previewAge">Turns 25</div>
+          <div class="preview-message" id="previewMessage">Wishing you a day filled with love...</div>
+          <div class="preview-from" id="previewFrom">- Brian</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Made with ❤️ by Tech Brian</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-github"></i></a>
+      </div>
+      <button class="support-btn">Support</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script>
+    // PWA Install Prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      setTimeout(() => {
+        if (confirm('Install HeartWish Certify as an app?')) {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then(() => deferredPrompt = null);
+        }
+      }, 3000);
+    });
+
+    // Particles
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } },
+        color: { value: ["#ff6f9c", "#9b59b6", "#ff2e96"] },
+        shape: { type: ["circle", "heart", "star"] },
+        opacity: { value: 0.6, random: true },
+        size: { value: 4, random: true },
+        move: { enable: true, speed: 2 }
+      },
+      interactivity: { events: { onhover: { enable: true, mode: "repulse" } } },
+      retina_detect: true
+    });
+
+    function startApp() {
+      document.getElementById('splash').style.animation = 'fadeOut 0.8s forwards';
+      setTimeout(() => {
+        document.getElementById('splash').classList.add('hidden');
+        document.getElementById('mainApp').classList.add('visible');
+      }, 800);
+    }
+
+    // Theme
+    document.getElementById('themeSwitch').addEventListener('change', () => {
+      document.body.classList.toggle('light-mode');
+      document.body.classList.toggle('dark-mode');
+    });
+
+    // Default date
+    document.getElementById('inputDate').valueAsDate = new Date();
+
+    // Upload
+    const uploadArea = document.getElementById('uploadArea');
+    const photoInput = document.getElementById('photoInput');
+    const previewPhoto = document.getElementById('previewPhoto');
+
+    uploadArea.addEventListener('click', () => photoInput.click());
+    ['dragover', 'dragleave', 'drop'].forEach(ev => {
+      uploadArea.addEventListener(ev, e => {
+        e.preventDefault();
+        uploadArea.classList.toggle('dragover', ev === 'dragover');
+      });
+    });
+    uploadArea.addEventListener('drop', e => {
+      const file = e.dataTransfer.files[0];
+      if (file?.type.startsWith('image/')) handlePhoto(file);
+    });
+    photoInput.addEventListener('change', e => e.target.files[0] && handlePhoto(e.target.files[0]));
+
+    function handlePhoto(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        previewPhoto.src = e.target.result;
+        previewPhoto.style.display = 'block';
+        updatePreview();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Templates
+    document.querySelectorAll('.template-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.template-item').forEach(i => i.classList.remove('selected'));
+        item.classList.add('selected');
+        const bg = item.dataset.bg;
+        document.getElementById('previewCard').style.backgroundImage = `url(${bg})`;
+        previewPhoto.style.display = 'none';
+        updatePreview();
+      });
+    });
+
+    // Preview Update
+    ['inputName', 'inputAge', 'inputDate', 'inputFrom', 'inputMessage'].forEach(id => {
+      document.getElementById(id).addEventListener('input', updatePreview);
+    });
+
+    function updatePreview() {
+      const name = document.getElementById('inputName').value || 'Name';
+      const age = document.getElementById('inputAge').value;
+      const date = document.getElementById('inputDate').value;
+      const from = document.getElementById('inputFrom').value;
+      const message = document.getElementById('inputMessage').value;
+
+      document.getElementById('previewName').textContent = name;
+      document.getElementById('previewAge').textContent = age ? `Turns ${age}` : '';
+      document.getElementById('previewDate').textContent = date ? new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Date';
+      document.getElementById('previewMessage').textContent = message;
+      document.getElementById('previewFrom').textContent = from ? `- ${from}` : '';
+    }
+
+    // Download
+    function downloadCard() {
+      html2canvas(document.getElementById('previewCard'), { scale: 2 }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `${document.getElementById('inputName').value || 'Birthday'}_Card.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+
+    // WhatsApp
+    function sendViaWhatsApp() {
+      const phone = prompt("Enter phone number (e.g., +254712345678):");
+      if (!phone) return;
+
+      const name = document.getElementById('inputName').value || 'Someone';
+      const text = encodeURIComponent(`Happy Birthday ${name}! Here's your wish card! 🎂\n\n${document.getElementById('inputMessage').value}`);
+
+      html2canvas(document.getElementById('previewCard'), { scale: 2 }).then(canvas => {
+        const url = `https://wa.me/${phone}?text=${text}`;
+        window.open(url, '_blank');
+      });
+    }
+
+    updatePreview();
+  </script>
+</body>
+</html>
