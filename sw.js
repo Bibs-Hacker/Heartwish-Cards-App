@@ -3,7 +3,7 @@ const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
-  'https://files.catbox.moe/vjjtdz.jpg',
+  'https://files.catbox.moe/bvif1j.jpg',
   'https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js',
   'https://html2canvas.hertzen.com/dist/html2canvas.min.js'
 ];
