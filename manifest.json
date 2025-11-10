@@ -1,0 +1,22 @@
+{
+  "name": "HeartWish Certify",
+  "short_name": "HeartWish",
+  "description": "Create beautiful romantic birthday certificates with love.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a0033",
+  "theme_color": "#ff6f9c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://files.catbox.moe/vjjtdz.jpg",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://files.catbox.moe/vjjtdz.jpg",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
